@@ -13,7 +13,7 @@ Since `gcloud` is not installed on this machine or not in your PATH, you can dep
 6. Connect your GitHub repository.
 7. Under **Variables & Secrets**, add the Gemini API Key:
    - Name: `GEMINI_API_KEY`
-   - Value: `AIzaSyCS2HLhIvEReRmigQoVf9WXFEZXaS6zQZ4`
+   - Value: `YOUR_GENERATE_GEMINI_API_KEY` (Keep this secret!)
 8. Deploy! The service will automatically build using the `Dockerfile` provided.
 
 ## Option 2: Deploy using gcloud CLI
@@ -24,7 +24,7 @@ gcloud run deploy pulse-guard `
   --source . `
   --region us-central1 `
   --allow-unauthenticated `
-  --set-env-vars="GEMINI_API_KEY=AIzaSyCS2HLhIvEReRmigQoVf9WXFEZXaS6zQZ4"
+  --set-env-vars="GEMINI_API_KEY=YOUR_API_KEY"
 ```
 
 This will automatically build the container via Cloud Build and output your **Cloud Run URL**.

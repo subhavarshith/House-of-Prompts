@@ -17,7 +17,7 @@ COPY backend/ ./backend/
 COPY --from=frontend-build /app/frontend/dist/ ./backend/static/
 
 # Bake the API key into the container so the user doesn't have to configure secrets in Cloud Run MVP
-ENV GEMINI_API_KEY=AIzaSyCS2HLhIvEReRmigQoVf9WXFEZXaS6zQZ4
+# GEMINI_API_KEY should be set as an environment variable in Cloud Run
 ENV PORT=8080
 EXPOSE 8080
 
