@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from .reasoning_agent import process_event
+from services.reasoning_agent import process_event
 
 logger = logging.getLogger(__name__)
 

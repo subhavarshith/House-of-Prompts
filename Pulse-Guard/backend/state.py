@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from .models.telemetry import EventLogEntry
+from models.telemetry import EventLogEntry
 
 events_log: List[Dict[str, Any]] = []
 
