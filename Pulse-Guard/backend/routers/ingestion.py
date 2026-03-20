@@ -1,40 +1,56 @@
-from fastapi import APIRouter, File, UploadFile, BackgroundTasks
-from pydantic import BaseModel
+from fastapi import APIRouter, File, UploadFile, BackgroundTasks, HTTPException
+from models.telemetry import TelemetryData, EventPayload
 import logging
-from services.pubsub_mock import publish_event
+from services.pubsub_service import publish_event
+from services.storage_service import upload_to_gcs
 import time
 import state
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-class TelemetryData(BaseModel):
-    heart_rate: int
-    motion: int
-
 @router.post("/telemetry")
 async def receive_telemetry(data: TelemetryData, background_tasks: BackgroundTasks):
+    """
+    Ingests IoT telemetry data (Heart Rate and Motion).
+    """
     logger.info(f"Received telemetry: HR={data.heart_rate}, Motion={data.motion}")
     
-    event_payload = {"type": "telemetry", "data": data.dict(), "timestamp": time.time()}
+    event_payload = {
+        "type": "telemetry", 
+        "data": data.dict(), 
+        "timestamp": time.time()
+    }
     state.add_event({"category": "input", "payload": event_payload})
     
-    # Trigger Pub/Sub event for Reasoning Agent
+    # Trigger Pub/Sub logic for Reasoning Agent
     background_tasks.add_task(publish_event, event_payload)
-    return {"status": "telemetry received"}
+    return {"status": "telemetry received", "data": data}
 
 @router.post("/upload-audio")
 async def receive_audio(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
-    # In a real app we would upload to GCS here. For local MVP we save to disk.
-    content = await file.read()
-    file_path = f"test_{file.filename}"
-    with open(file_path, "wb") as f:
-        f.write(content)
+    """
+    Handles audio file uploads for distress call analysis.
+    """
+    if not file.filename.endswith(('.wav', '.mp3')):
+        raise HTTPException(status_code=400, detail="Unsupported file format. Only WAV and MP3 are allowed.")
         
-    logger.info(f"Received audio file: {file.filename}")
-    event_payload = {"type": "audio", "file_path": file_path, "filename": file.filename, "timestamp": time.time()}
+    content = await file.read()
+    
+    # Use the storage service to 'upload' to GCS
+    gcs_uri = await upload_to_gcs(content, file.filename)
+    
+    logger.info(f"Received audio file: {file.filename} (Stored at: {gcs_uri})")
+    
+    event_payload = {
+        "type": "audio", 
+        "file_path": gcs_uri, 
+        "filename": file.filename, 
+        "timestamp": time.time()
+    }
     state.add_event({"category": "input", "payload": event_payload})
     
     if background_tasks:
         background_tasks.add_task(publish_event, event_payload)
-    return {"status": "audio received", "filename": file.filename}
+        
+    return {"status": "audio received", "filename": file.filename, "gcs_uri": gcs_uri}

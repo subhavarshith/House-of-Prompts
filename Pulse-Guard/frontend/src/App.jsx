@@ -50,10 +50,18 @@ function App() {
           <p className="text-slate-400 mt-2 font-medium">Multimodal Emergency Response Bridge</p>
         </div>
         <div className="flex gap-4">
-          <button onClick={simulateTelemetry} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-bold shadow">
+          <button 
+            onClick={simulateTelemetry} 
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-bold shadow transition-all active:scale-95"
+            aria-label="Simulate critical heart rate and motion telemetry"
+          >
             Simulate Critical Telemetry
           </button>
-          <button onClick={simulateAudio} className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm font-bold shadow">
+          <button 
+            onClick={simulateAudio} 
+            className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm font-bold shadow transition-all active:scale-95"
+            aria-label="Simulate audio distress call"
+          >
             Simulate Distress Audio
           </button>
         </div>
