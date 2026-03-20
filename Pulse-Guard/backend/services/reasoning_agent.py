@@ -103,7 +103,7 @@ async def process_event(event_data: dict):
 
     try:
         response = await client.aio.models.generate_content(
-            model="gemini-3-flash",
+            model="gemini-1.5-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 tools=[tool],
