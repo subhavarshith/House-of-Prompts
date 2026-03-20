@@ -103,10 +103,11 @@ async def process_event(event_data: dict):
 
     try:
         response = await client.aio.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
-                tools=[tool]
+                tools=[tool],
+                system_instruction="You are a critical emergency response agent. If the user's data indicates a life-threatening situation (High Heart Rate + No Motion or Distress Audio), YOU MUST call the dispatch_emergency_services tool immediately. Do not ask questions; take action."
             )
         )
 
