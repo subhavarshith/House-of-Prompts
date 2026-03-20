@@ -55,7 +55,9 @@ async def process_event(event_data: dict):
     The reasoning bridge that analyzes events using Gemini 3 Flash.
     """
     if not client:
-        logger.error("Gemini client not initialized. Cannot process event.")
+        error_msg = "Gemini client not initialized. Cannot process event."
+        logger.error(error_msg)
+        state.add_event({"category": "reasoning", "payload": {"text": error_msg, "timestamp": time.time()}})
         return
 
     logger.info(f"Reasoning Agent analyzing event: {event_data['type']}")
@@ -126,4 +128,6 @@ async def process_event(event_data: dict):
             logger.info(f"Gemini analysis complete. No emergency detected. Output: {response.text}")
             state.add_event({"category": "reasoning", "payload": {"text": response.text, "timestamp": time.time()}})
     except Exception as e:
-        logger.error(f"Error during Gemini processing: {e}")
+        error_msg = f"Error during Gemini processing: {e}"
+        logger.error(error_msg)
+        state.add_event({"category": "reasoning", "payload": {"text": error_msg, "timestamp": time.time()}})

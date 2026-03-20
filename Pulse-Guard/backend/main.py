@@ -14,13 +14,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(ingestion.router)
+app.include_router(ingestion.router, prefix="/api")
 
-@app.get("/")
+@app.get("/api/health")
 def read_root():
     return {"status": "Pulse-Guard Backend is running"}
 
-@app.get("/events")
+@app.get("/api/events")
 def get_events():
     return {"events": state.get_events()}
 
